@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:projeto/chamado/abertura_chamado_page.dart';
+import 'package:projeto/chamado/abertura_chamado/abertura_chamado_page.dart';
+import 'package:projeto/chamado/lista_chamado/lista_chamada_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -55,9 +56,9 @@ class LoginPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).push(
+                Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (context) => const AberturaChamadoPage(),
+                    builder: (context) => const ListaChamadaPage(),
                   ),
                 );
               },
