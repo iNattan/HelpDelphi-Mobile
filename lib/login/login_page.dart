@@ -41,6 +41,9 @@ class LoginPage extends StatelessWidget {
                     height: 15,
                   ),
                   TextField(
+                    obscureText: true,
+                    enableSuggestions: false,
+                    autocorrect: false,
                     decoration: InputDecoration(
                       hintText: 'Senha',
                       prefixIcon: const Icon(Icons.lock),
