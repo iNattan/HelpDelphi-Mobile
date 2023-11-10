@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class AberturaChamadoPage extends StatefulWidget {
   const AberturaChamadoPage({super.key});
@@ -9,7 +10,7 @@ class AberturaChamadoPage extends StatefulWidget {
 
 class _AberturaChamadoPageState extends State<AberturaChamadoPage> {
   String? criticidade;
-  List<String> criticidades = ['Edu', 'B', 'C'];
+  List<String> criticidades = ['Alta', 'Média', 'Baixa'];
 
   @override
   Widget build(BuildContext context) {
