@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:projeto/chamado/lista_chamado/lista_chamada_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -14,6 +16,20 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    verifyToken().then((value) => {
+          if (value)
+            {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ListaChamadaPage()))
+            }
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       TextFormField(
                         controller: _passwordController,
+                        obscureText: true,
                         keyboardType: TextInputType.text,
                         validator: (password) {
                           if (password == null || password.isEmpty) {
@@ -98,7 +115,17 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Future<bool> verifyToken() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    if (sharedPreferences.getString('token') != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   Future<bool> login() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var url = Uri.parse('http://localhost:3333/users/session');
     var response = await http.post(url,
         headers: <String, String>{
@@ -110,11 +137,11 @@ class _LoginPageState extends State<LoginPage> {
         }));
 
     if (response.statusCode == 200) {
-      print(jsonDecode(response.body)['token']);
+      String token = jsonDecode(response.body)['token'];
+      await sharedPreferences.setString('token', token);
       return true;
     }
 
-    print(jsonDecode(response.body));
     return false;
   }
 }
