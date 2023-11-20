@@ -1,9 +1,19 @@
-import 'package:flutter/material.dart';
-import 'package:projeto/chamado/abertura_chamado/abertura_chamado_page.dart';
-import 'package:projeto/chamado/lista_chamado/lista_chamada_page.dart';
+import 'dart:convert';
 
-class LoginPage extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,41 +36,42 @@ class LoginPage extends StatelessWidget {
             ),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 50),
-              child: Column(
-                children: [
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Nome de usuário',
-                      prefixIcon: const Icon(Icons.account_circle),
-                      hintStyle: const TextStyle(color: Colors.black),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _usernameController,
+                      decoration: InputDecoration(
+                        hintText: 'Nome de usuário',
+                        prefixIcon: const Icon(Icons.account_circle),
+                        hintStyle: const TextStyle(color: Colors.black),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Senha',
-                      prefixIcon: const Icon(Icons.lock),
-                      hintStyle: const TextStyle(color: Colors.black),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    TextFormField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(
+                        hintText: 'Senha',
+                        prefixIcon: const Icon(Icons.lock),
+                        hintStyle: const TextStyle(color: Colors.black),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => const ListaChamadaPage(),
-                  ),
-                );
+              onPressed: () async {
+                await login();
               },
               style: ElevatedButton.styleFrom(
                 padding:
@@ -72,5 +83,21 @@ class LoginPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<bool> login() async {
+    var url = Uri.parse('https://helpdelphi-api.fly.dev');
+    var response = await http.post(url, body: {
+      "username": _usernameController,
+      "password": _passwordController,
+    });
+
+    if (response.statusCode == 200) {
+      print(jsonDecode(response.body)['token']);
+      return true;
+    }
+
+    print(jsonDecode(response.body));
+    return false;
   }
 }
