@@ -101,7 +101,22 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    if (_formKey.currentState!.validate()) await login();
+                    FocusScopeNode currentFocus = FocusScope.of(context);
+                    if (_formKey.currentState!.validate()) {
+                      bool response = await login();
+                      if (currentFocus.hasPrimaryFocus) {
+                        currentFocus.unfocus();
+                      }
+
+                      if (response) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const ListaChamadaPage()));
+                      }
+                    }
+                    ;
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
