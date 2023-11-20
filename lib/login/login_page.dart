@@ -20,77 +20,94 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
-        padding: const EdgeInsets.all(40),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/images/Logo.png',
-              width: 200,
-              height: 200,
-            ),
-            const Text(
-              'HelpDelphi',
-              style: TextStyle(fontSize: 30),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 50),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: _usernameController,
-                      decoration: InputDecoration(
-                        hintText: 'Nome de usuário',
-                        prefixIcon: const Icon(Icons.account_circle),
-                        hintStyle: const TextStyle(color: Colors.black),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    TextFormField(
-                      controller: _passwordController,
-                      decoration: InputDecoration(
-                        hintText: 'Senha',
-                        prefixIcon: const Icon(Icons.lock),
-                        hintStyle: const TextStyle(color: Colors.black),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                    ),
-                  ],
+          padding: const EdgeInsets.all(40),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/Logo.png',
+                  width: 200,
+                  height: 200,
                 ),
-              ),
+                const Text(
+                  'HelpDelphi',
+                  style: TextStyle(fontSize: 30),
+                ),
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 50),
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: _usernameController,
+                        keyboardType: TextInputType.text,
+                        validator: (username) {
+                          if (username == null || username.isEmpty) {
+                            return 'Por favor, digite seu usuario';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Nome de usuário',
+                          prefixIcon: const Icon(Icons.account_circle),
+                          hintStyle: const TextStyle(color: Colors.black),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextFormField(
+                        controller: _passwordController,
+                        keyboardType: TextInputType.text,
+                        validator: (password) {
+                          if (password == null || password.isEmpty) {
+                            return 'Por favor, digite sua senha';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Senha',
+                          prefixIcon: const Icon(Icons.lock),
+                          hintStyle: const TextStyle(color: Colors.black),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) await login();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 25, horizontal: 50),
+                  ),
+                  child: const Text('Entrar'),
+                )
+              ],
             ),
-            ElevatedButton(
-              onPressed: () async {
-                await login();
-              },
-              style: ElevatedButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 25, horizontal: 50),
-              ),
-              child: const Text('Entrar'),
-            )
-          ],
-        ),
-      ),
+          )),
     );
   }
 
   Future<bool> login() async {
-    var url = Uri.parse('https://helpdelphi-api.fly.dev');
-    var response = await http.post(url, body: {
-      "username": _usernameController,
-      "password": _passwordController,
-    });
+    var url = Uri.parse('http://localhost:3333/users/session');
+    var response = await http.post(url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          "username": _usernameController.text,
+          "password": _passwordController.text,
+        }));
 
     if (response.statusCode == 200) {
       print(jsonDecode(response.body)['token']);
