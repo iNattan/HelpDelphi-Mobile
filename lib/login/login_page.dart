@@ -108,12 +108,14 @@ class _LoginPageState extends State<LoginPage> {
                         currentFocus.unfocus();
                       }
 
-                      if (response) {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const ListaChamadaPage()));
+                      if (mounted) {
+                        if (response) {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ListaChamadaPage()));
+                        }
                       }
                     }
                     ;
