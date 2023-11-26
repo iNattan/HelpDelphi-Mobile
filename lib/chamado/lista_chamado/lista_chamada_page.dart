@@ -44,7 +44,7 @@ class _ListaChamadoState extends State<ListaChamadoPage> {
                       child: CardChamadoWidget(
                         titulo: ticket.subject,
                         descricao: ticket.description,
-                        status: Colors.green,
+                        status: getStatusColor(ticket.status),
                       ),
                     );
                   },
@@ -93,4 +93,27 @@ class GetTicketsResponse {
   GetTicketsResponse({
     required this.items,
   });
+}
+
+MaterialColor getStatusColor(String status) {
+  switch (status) {
+    case 'waiting':
+      {
+        return Colors.grey;
+      }
+    case 'in_progress':
+      {
+        return Colors.blue;
+      }
+    case 'finished':
+      {
+        return Colors.green;
+      }
+    case 'stopped':
+      {
+        return Colors.red;
+      }
+  }
+
+  throw Exception('Status not found');
 }
