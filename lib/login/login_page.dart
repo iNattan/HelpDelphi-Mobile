@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const ListaChamadaPage()))
+                      builder: (context) => const ListaChamadoPage()))
             }
         });
   }
@@ -114,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const ListaChamadaPage()));
+                                      const ListaChamadoPage()));
                         }
                       }
                     }
@@ -143,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<bool> login() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var url = Uri.parse('http://localhost:3333/users/session');
+    var url = Uri.parse('https://helpdelphi-api.fly.dev/users/session');
     var response = await http.post(url,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
