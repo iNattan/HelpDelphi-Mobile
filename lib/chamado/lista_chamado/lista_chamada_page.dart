@@ -43,7 +43,7 @@ class _ListaChamadoState extends State<ListaChamadoPage> {
                       margin: const EdgeInsets.all(8.0),
                       child: CardChamadoWidget(
                         titulo: ticket.subject,
-                        descricao: ticket.user.name,
+                        descricao: ticket.description,
                         status: Colors.green,
                       ),
                     );
@@ -71,7 +71,7 @@ class _ListaChamadoState extends State<ListaChamadoPage> {
 
   Future<List<Ticket>> getTickets() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var url = Uri.parse('https://helpdelphi-api.fly.dev/tickets?page=1');
+    var url = Uri.parse('https://helpdelphi-api.fly.dev/tickets/me');
     final response = await http.get(url, headers: {
       "Authorization": "Bearer ${sharedPreferences.getString('token')}",
       'Content-Type': 'application/json; charset=UTF-8',
