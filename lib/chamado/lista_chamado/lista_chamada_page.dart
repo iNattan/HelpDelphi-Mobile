@@ -39,10 +39,13 @@ class _ListaChamadoState extends State<ListaChamadoPage> {
                   itemCount: tickets.length,
                   itemBuilder: (context, index) {
                     final Ticket ticket = tickets[index];
-                    return CardChamadoWidget(
-                      titulo: ticket.subject,
-                      descricao: ticket.user.name,
-                      status: Colors.green,
+                    return Container(
+                      margin: const EdgeInsets.all(8.0),
+                      child: CardChamadoWidget(
+                        titulo: ticket.subject,
+                        descricao: ticket.user.name,
+                        status: Colors.green,
+                      ),
                     );
                   },
                 );
