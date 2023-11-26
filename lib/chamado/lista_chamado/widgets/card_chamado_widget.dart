@@ -14,46 +14,38 @@ class CardChamadoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const AberturaChamadoPage(),
-        ),
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        border: Border.all(),
+        borderRadius: BorderRadius.circular(15),
       ),
-      radius: 15,
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          border: Border.all(),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              titulo,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            titulo,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
             ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(child: Text(descricao)),
-                const SizedBox(
-                  width: 8,
-                ),
-                Container(
-                  width: 20,
-                  height: 20,
-                  decoration:
-                      BoxDecoration(shape: BoxShape.circle, color: status),
-                )
-              ],
-            )
-          ],
-        ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(child: Text(descricao)),
+              const SizedBox(
+                width: 8,
+              ),
+              Container(
+                width: 20,
+                height: 20,
+                decoration:
+                    BoxDecoration(shape: BoxShape.circle, color: status),
+              )
+            ],
+          )
+        ],
       ),
     );
   }

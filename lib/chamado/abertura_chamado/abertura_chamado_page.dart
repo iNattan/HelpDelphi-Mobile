@@ -19,6 +19,7 @@ class _AberturaChamadoPageState extends State<AberturaChamadoPage> {
   final _formKey = GlobalKey<FormState>();
   final _descricaoController = TextEditingController();
   final _assuntoController = TextEditingController();
+  bool _isButtonDisabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +42,12 @@ class _AberturaChamadoPageState extends State<AberturaChamadoPage> {
                 TextFormField(
                   controller: _assuntoController,
                   keyboardType: TextInputType.text,
+                  validator: (assunto) {
+                    if (assunto == null || assunto.isEmpty) {
+                      return 'Por favor, digite o assunto do chamado';
+                    }
+                    return null;
+                  },
                   decoration: InputDecoration(
                     labelText: 'Assunto*',
                     border: OutlineInputBorder(
@@ -56,6 +63,12 @@ class _AberturaChamadoPageState extends State<AberturaChamadoPage> {
                 TextFormField(
                   controller: _descricaoController,
                   keyboardType: TextInputType.text,
+                  validator: (descricao) {
+                    if (descricao == null || descricao.isEmpty) {
+                      return 'Por favor, digite uma descrição do chamado';
+                    }
+                    return null;
+                  },
                   decoration: InputDecoration(
                     labelText: 'Descrição*',
                     border: OutlineInputBorder(
@@ -99,31 +112,51 @@ class _AberturaChamadoPageState extends State<AberturaChamadoPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ElevatedButton(
-              onPressed: () async {
+            ElevatedButton(              
+              onPressed: _isButtonDisabled ? null : () async {
                 FocusScopeNode currentFocus = FocusScope.of(context);
                 if (_formKey.currentState!.validate()) {
-                  bool response = await createTicket();
-                  if (currentFocus.hasPrimaryFocus) {
-                    currentFocus.unfocus();
-                  }
-
-                  if (mounted) {
-                    if (response) {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ListaChamadoPage()));
-                    }
+                  setState(() {
+                    _isButtonDisabled = true;
+                  });
+                bool response = await createTicket();
+                if (currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
+                if (mounted) {
+                  if (response) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ListaChamadoPage(),
+                      ),
+                    );
                   }
                 }
-              },
+              }
+            },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 20, horizontal: 30
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.0),                
+                ),
+              ),
               child: const Text('Salvar'),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 20, horizontal: 30
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.0),                
+                ),
+              ),
               child: const Text('Cancelar'),
             ),
           ],

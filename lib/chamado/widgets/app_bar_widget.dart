@@ -6,8 +6,16 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      backgroundColor: Color.fromARGB(1000, 7, 71, 134),
       automaticallyImplyLeading: false,
-      title: const Text('LOGO'),
+      title: Container(
+        width: preferredSize.height,
+        height: preferredSize.height,
+        child: Image.asset(
+          'assets/images/Logo.png', 
+          fit: BoxFit.contain, 
+        ),
+      ),
       actions: [
         IconButton(
             onPressed: () async {

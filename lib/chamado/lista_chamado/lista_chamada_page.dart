@@ -28,36 +28,40 @@ class _ListaChamadoState extends State<ListaChamadoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(),
-      body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: FutureBuilder<List<Ticket>>(
-            future: futureTickets,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final List<Ticket> tickets = snapshot.data!;
-                return ListView.builder(
-                  itemCount: tickets.length,
-                  itemBuilder: (context, index) {
-                    final Ticket ticket = tickets[index];
-                    return Container(
-                      margin: const EdgeInsets.all(8.0),
-                      child: CardChamadoWidget(
-                        titulo: ticket.subject,
-                        descricao: ticket.description,
-                        status: getStatusColor(ticket.status),
-                      ),
-                    );
-                  },
-                );
-              } else if (snapshot.hasError) {
-                return Text('${snapshot.error}');
-              }
-
-              return const Center(
-                child: CircularProgressIndicator(),
+      body: Container(
+        margin: const EdgeInsets.only(bottom: 60),
+        child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: FutureBuilder<List<Ticket>>(
+          future: futureTickets,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final List<Ticket> tickets = snapshot.data!;
+              return ListView.builder(
+                itemCount: tickets.length,
+                itemBuilder: (context, index) {
+                  final Ticket ticket = tickets[index];
+                  return Container(
+                    margin: const EdgeInsets.all(8.0),
+                    child: CardChamadoWidget(
+                      titulo: ticket.subject,
+                      descricao: ticket.description,
+                      status: getStatusColor(ticket.status),
+                    ),
+                  );
+                },
               );
-            },
-          )),
+            } else if (snapshot.hasError) {
+              return Text('${snapshot.error}');
+            }
+
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        )
+      ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute(

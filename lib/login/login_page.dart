@@ -116,15 +116,30 @@ class _LoginPageState extends State<LoginPage> {
                                   builder: (context) =>
                                       const ListaChamadoPage()));
                         }
+                        else {          
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Usuário ou senha incorretos'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        }
                       }
                     }
                     ;
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 25, horizontal: 50),
+                      vertical: 20, horizontal: 50
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),                
+                    ),
                   ),
-                  child: const Text('Entrar'),
+                  child: const Text(
+                    'Entrar',
+                    style: TextStyle(fontSize: 20),
+                  ),
                 )
               ],
             ),
