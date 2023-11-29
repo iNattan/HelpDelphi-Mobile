@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:projeto/chamado/abertura_chamado/abertura_chamado_page.dart';
 
 class CardChamadoWidget extends StatelessWidget {
   final String titulo;
