@@ -14,12 +14,20 @@ class AberturaChamadoPage extends StatefulWidget {
 }
 
 class _AberturaChamadoPageState extends State<AberturaChamadoPage> {
+  late Future<int> futureLastNumber;
+
   List<String> criticidades = ['Baixa', 'Média', 'Alta'];
   String _selectedCriticidade = 'Baixa';
   final _formKey = GlobalKey<FormState>();
   final _descricaoController = TextEditingController();
   final _assuntoController = TextEditingController();
   bool _isButtonDisabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    futureLastNumber = getLastNumber();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +42,21 @@ class _AberturaChamadoPageState extends State<AberturaChamadoPage> {
                 const SizedBox(
                   height: 40,
                 ),
-                const Text('Abertura de chamados - N°5',
-                    style: TextStyle(fontSize: 20)),
+                FutureBuilder<int>(
+                    future: futureLastNumber,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        final int lastNumber = snapshot.data!;
+                        return Text(
+                          'Abertura de chamados - N°${lastNumber + 1}',
+                          style: const TextStyle(fontSize: 20),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('${snapshot.error}');
+                      }
+
+                      return const Text('Carregando...');
+                    }),
                 const SizedBox(
                   height: 40,
                 ),
@@ -112,35 +133,36 @@ class _AberturaChamadoPageState extends State<AberturaChamadoPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ElevatedButton(              
-              onPressed: _isButtonDisabled ? null : () async {
-                FocusScopeNode currentFocus = FocusScope.of(context);
-                if (_formKey.currentState!.validate()) {
-                  setState(() {
-                    _isButtonDisabled = true;
-                  });
-                bool response = await createTicket();
-                if (currentFocus.hasPrimaryFocus) {
-                  currentFocus.unfocus();
-                }
-                if (mounted) {
-                  if (response) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ListaChamadoPage(),
-                      ),
-                    );
-                  }
-                }
-              }
-            },
+            ElevatedButton(
+              onPressed: _isButtonDisabled
+                  ? null
+                  : () async {
+                      FocusScopeNode currentFocus = FocusScope.of(context);
+                      if (_formKey.currentState!.validate()) {
+                        setState(() {
+                          _isButtonDisabled = true;
+                        });
+                        bool response = await createTicket();
+                        if (currentFocus.hasPrimaryFocus) {
+                          currentFocus.unfocus();
+                        }
+                        if (mounted) {
+                          if (response) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ListaChamadoPage(),
+                              ),
+                            );
+                          }
+                        }
+                      }
+                    },
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20, horizontal: 30
-                ),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.0),                
+                  borderRadius: BorderRadius.circular(16.0),
                 ),
               ),
               child: const Text('Salvar'),
@@ -150,11 +172,10 @@ class _AberturaChamadoPageState extends State<AberturaChamadoPage> {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20, horizontal: 30
-                ),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.0),                
+                  borderRadius: BorderRadius.circular(16.0),
                 ),
               ),
               child: const Text('Cancelar'),
@@ -163,6 +184,24 @@ class _AberturaChamadoPageState extends State<AberturaChamadoPage> {
         ),
       ),
     );
+  }
+
+  Future<int> getLastNumber() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final token = sharedPreferences.getString('token');
+    final url = Uri.parse('https://helpdelphi-api.fly.dev/tickets/number');
+    final response = await http.get(url, headers: {
+      "Authorization": "Bearer ${token}",
+      'Cotent-Type': 'application/json; charset=UTF-8',
+    });
+
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body);
+      final int lastNumber = body['number'];
+      return lastNumber;
+    }
+
+    throw Exception('Failed to load last ticket number');
   }
 
   Future<bool> createTicket() async {
