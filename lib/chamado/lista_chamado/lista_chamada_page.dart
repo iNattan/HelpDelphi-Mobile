@@ -24,43 +24,52 @@ class _ListaChamadoState extends State<ListaChamadoPage> {
     futureTickets = getTickets();
   }
 
+  Future<void> _pullRefresh() async {
+    setState(() {
+      futureTickets = getTickets();
+    });
+    return;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(),
-      body: Container(
-        margin: const EdgeInsets.only(bottom: 60),
-        child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: FutureBuilder<List<Ticket>>(
-          future: futureTickets,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final List<Ticket> tickets = snapshot.data!;
-              return ListView.builder(
-                itemCount: tickets.length,
-                itemBuilder: (context, index) {
-                  final Ticket ticket = tickets[index];
-                  return Container(
-                    margin: const EdgeInsets.all(8.0),
-                    child: CardChamadoWidget(
-                      titulo: ticket.subject,
-                      descricao: ticket.description,
-                      status: getStatusColor(ticket.status),
-                    ),
+      body: RefreshIndicator(
+        onRefresh: _pullRefresh,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 60),
+          child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: FutureBuilder<List<Ticket>>(
+                future: futureTickets,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final List<Ticket> tickets = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: tickets.length,
+                      itemBuilder: (context, index) {
+                        final Ticket ticket = tickets[index];
+                        return Container(
+                          margin: const EdgeInsets.all(8.0),
+                          child: CardChamadoWidget(
+                            titulo: ticket.subject,
+                            descricao: ticket.description,
+                            status: getStatusColor(ticket.status),
+                          ),
+                        );
+                      },
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('${snapshot.error}');
+                  }
+
+                  return const Center(
+                    child: CircularProgressIndicator(),
                   );
                 },
-              );
-            } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
-            }
-
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          },
-        )
-      ),
+              )),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.of(context).push(
